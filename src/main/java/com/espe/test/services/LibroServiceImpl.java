@@ -47,7 +47,7 @@ public class LibroServiceImpl implements LibroService {
         if (o.isPresent()) {
             Libro libroDB = o.get();
             libroDB.setTitulo(libro.getTitulo());
-            libroDB.setAutor(libro.getAutor());
+            libroDB.setAutor_id(libro.getAutor_id());
             libroDB.setGenero(libro.getGenero());
             return Optional.of(repository.save(libroDB));
         }

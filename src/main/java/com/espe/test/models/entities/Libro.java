@@ -1,6 +1,10 @@
 package com.espe.test.models.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name="libro")
@@ -11,10 +15,18 @@ public class Libro {
     private Long id;
 
     //titulo
+    @NotBlank
+    @Size(min = 3, max = 100)
     private String titulo;
+
     //autor
-    private String autor;
+    @NotNull
+    private Long autor_id;
+
     //genero
+    @NotBlank
+    @Size(min = 3, max = 50)
+    @Pattern(regexp = "^[a-zA-Z\\sñÑáéíóúÁÉÍÓÚüÜ]+$"        )
     private String genero;
 
     //getters and setters
@@ -34,12 +46,12 @@ public class Libro {
         this.titulo = titulo;
     }
 
-    public String getAutor() {
-        return autor;
+    public Long getAutor_id() {
+        return autor_id;
     }
 
-    public void setAutor(String autor) {
-        this.autor = autor;
+    public void setAutor_id(Long autor_id) {
+        this.autor_id = autor_id;
     }
 
     public String getGenero() {

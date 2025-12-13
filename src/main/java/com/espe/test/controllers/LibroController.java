@@ -1,8 +1,11 @@
 package com.espe.test.controllers;
 
+import com.espe.test.clientes.AutorClienteRest;
+import com.espe.test.models.dto.AutorDTO;
 import com.espe.test.models.entities.Libro;
 import com.espe.test.repositories.LibroRepository;
 import com.espe.test.services.LibroService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +20,9 @@ public class LibroController {
 
     @Autowired
     private LibroService service;
+
+    @Autowired
+    private AutorClienteRest autorClienteRest;
 
     @GetMapping
     public ResponseEntity<List<Libro>> listar() {
@@ -35,16 +41,24 @@ public class LibroController {
 
 
     @PostMapping
-    public ResponseEntity<?> crear(@RequestBody Libro libro) {
-        Libro libroDB = service.guardar(libro);
-        return ResponseEntity.status(HttpStatus.CREATED).body(libroDB);
+    public ResponseEntity<?> crear(@Valid @RequestBody Libro libro) {
+        Optional<AutorDTO> autorDTO = autorClienteRest.buscarPorId(libro.getAutor_id());
+        if (autorDTO.isPresent()) {
+
+            Libro libroDB = service.guardar(libro);
+            return ResponseEntity.status(HttpStatus.CREATED).body(libroDB);
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> editar(@PathVariable Long id, @RequestBody Libro libro) {
         Optional<Libro> o = service.editar(id, libro);
         if (o.isPresent()) {
-            return ResponseEntity.ok(o.get());
+            Libro libroDB= o.get();
+            libroDB.setTitulo(libro.getTitulo());
+            libroDB.setGenero(libro.getGenero());
+            return ResponseEntity.status(HttpStatus.CREATED).body(service.guardar(libroDB));
         }
         return ResponseEntity.notFound().build();
     }
@@ -60,4 +74,3 @@ public class LibroController {
     }
 
 }
-
